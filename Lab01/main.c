@@ -11,7 +11,7 @@
 #include "MCU_init.h"
 #include "SYS_init.h"
 
-
+//  copy the Buzz function from ~/Nu-LB-NUC140_BSP3.00.004_v1.4.5/SampleCode/Nu-LB-NUC140/GPIO_Buzzer
 void Buzz(int number)
 {
     int i;
@@ -23,20 +23,21 @@ void Buzz(int number)
     }
 }
 
+//  main function
 int main(void)
 {
     //	initializing
     SYS_Init(); 
-    //	for LEDs
+    //	initial LEDs
     GPIO_SetMode(PC, BIT12, GPIO_MODE_OUTPUT);
     GPIO_SetMode(PC, BIT13, GPIO_MODE_OUTPUT);
     GPIO_SetMode(PC, BIT14, GPIO_MODE_OUTPUT);
     GPIO_SetMode(PC, BIT15, GPIO_MODE_OUTPUT);
-    // for buzzer
+    //  initial buzzer
     GPIO_SetMode(PB, BIT11, GPIO_MODE_OUTPUT);
 
-
-    while(1) {
+    //  Leds bounce back and fourth, and buzzer buzz.
+    while(1) 
         // first
         PC12 =0; // turn on LED
         CLK_SysTickDelay(100000);	 // Delay 
