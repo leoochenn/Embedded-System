@@ -32,7 +32,7 @@ void winSound(void);
 void Buzz(int);
 int LENGTH = 4;
 void Display_7seg(uint16_t value);
-
+void getUserInput(uint8_t, uint8_t*, char*, int*);
 
 unsigned char GameTitle[128*8] ={
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x3C,0x02,0xFE,0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x7E,0x02,0x02,0x0E,0xF0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -63,6 +63,8 @@ int main(void)
 char Text[16] = "Guess:          ";
 char Text2[16] = "              ";
 char Text3[16] = "Guess #:      ";
+	char Text4[16] = "input number	";
+	char Text5[16] = "            ";
 uint8_t code[4] = {2,6,9,4};
 int Code = 2694;
 uint8_t keyin=0;
@@ -74,6 +76,8 @@ uint8_t numGuesses = 0;
 int i = 0;
 int j;
 
+
+
 SYS_Init();
 init_LCD();
 clear_LCD();
@@ -83,13 +87,6 @@ GPIO_SetMode(PC, BIT12, GPIO_MODE_OUTPUT);
 
 
 flage:
-
-// create a set of random number
-/*for (i = 0; i < 4; i++){
-code[i] = rand()%10 + 1;
-}
-for (i = 0; i < 4; i++)
-printf("%d ", code[i]);*/
 
 keyin=0;
 numB=0;
@@ -104,6 +101,14 @@ draw_LCD(GameTitle);   // draw Game Title scene
 Buzz(5);
 for (i=0;i<3;i++) CLK_SysTickDelay(1000000);
 clear_LCD();
+
+//	user input secrete code.
+	print_Line(1, Text4);
+	for (i=0;i<3;i++) CLK_SysTickDelay(1000000);
+	clear_LCD();
+	getUserInput(keyin, code, Text5, &Code);
+	clear_LCD();
+	
 
 while (numBulls(guess, code) != LENGTH) {
 i=0;
@@ -148,7 +153,7 @@ for (j = 0; j < 50; j++) Display_7seg(Code/1); Buzz(1);
 //for (j = 0; j < 50; j++) Display_7seg(0); Buzz(1);
 CloseSevenSegment();
 
-printS_5x7(10,56,"Press Any Key To Start!");
+printS_5x7(10,56,"Press Any Key To reStart!");
 keyin=ScanKey();
 while(keyin==0) { keyin=ScanKey();}
 clear_LCD();
@@ -242,3 +247,25 @@ CloseSevenSegment();
 ShowSevenSegment(0,digit);
 CLK_SysTickDelay(5000);
 }
+
+
+void getUserInput(uint8_t keyin, uint8_t* code, char *Text5, int* Code){
+	int i;
+	keyin = 0;
+	while(1){
+		while(keyin == 0){
+			keyin = ScanKey();
+		}
+		code[i] = keyin;
+		sprintf(Text5,"%d%d%d%d", code[0],code[1],code[2],code[3]); // print scankey input to string
+		print_Line(1, Text5);         // display string on LCD
+		CLK_SysTickDelay(500000);   // delay
+		keyin = 0;
+		++i;
+		if(i==4){
+			*Code = code[0]*1000 + code[1]*100 + code[2]*10 + code[3]*1;
+			break;
+		}
+	}
+}
+
