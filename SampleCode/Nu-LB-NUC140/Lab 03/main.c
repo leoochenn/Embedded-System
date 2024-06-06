@@ -145,7 +145,7 @@ flage:
 
 	}
 
-
+	//	zeroing all the guesses everytime.
 	guess[0] = 0;
 	guess[1] = 0;
 	guess[2] = 0;
