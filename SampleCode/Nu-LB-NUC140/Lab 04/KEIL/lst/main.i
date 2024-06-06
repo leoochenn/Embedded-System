@@ -21537,7 +21537,7 @@ void TMR1_IRQHandler(void)
  
 void Init_Timer1(void)
 {
-  TIMER_Open(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10020)), TMR1_OPERATING_MODE, TMR1_OPERATING_FREQ);
+  TIMER_Open(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10020)), (1UL << 27), 1);
   TIMER_EnableInt(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10020)));
   NVIC_EnableIRQ(TMR1_IRQn);
   TIMER_Start(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10020)));	
@@ -21548,7 +21548,8 @@ int main(void)
 
 	int i=3;
 	int j=0;
-	int k=0;
+	
+	uint8_t k = 0;
 	int s=0;
 	int code;	
  
@@ -21560,21 +21561,22 @@ int main(void)
 		GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), (0x00001000 | 0x00002000 | 0x00004000 | 0x00008000), 0x1UL); 
  
 		Init_Timer1();
- 
+	Buzz(3);
+	CLK_SysTickDelay(500000);
  	  while(1) {
 		  k=ScanKey();
+			
 			if (k!=0) {
 				s = s*10 + k;			
-	      printf("key=%d i=%d s=%d\n", k, i, s); 
+	      
 				i--;
 				if (i<0) {
+					
 					i=1;
 					cumdown=s;
 					s=0;
-					
+					TMR1_IRQHandler();
 					Init_Timer1();
-
-          
 				}
 			}
 		}

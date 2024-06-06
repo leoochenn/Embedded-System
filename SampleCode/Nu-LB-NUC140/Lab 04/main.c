@@ -81,7 +81,8 @@ int main(void)
 
 	int i=3;
 	int j=0;
-	int k=0;
+	//	int k=0;
+	uint8_t k = 0;
 	int s=0;
 	int code;	
  
@@ -93,21 +94,21 @@ int main(void)
 		GPIO_SetMode(PC, (BIT12 | BIT13 | BIT14 | BIT15), GPIO_MODE_OUTPUT); // set LED GPIO pin
  
 		Init_Timer1();
- 
+	Buzz(3);
+	CLK_SysTickDelay(500000);
  	  while(1) {
 		  k=ScanKey();
+			
 			if (k!=0) {
 				s = s*10 + k;			
-	      printf("key=%d i=%d s=%d\n", k, i, s); // add retarget.c to library & set DEBUG_ENABLE_SEMIHOST in config.
+	      //printf("key=%d i=%d s=%d\n", k, i, s); // add retarget.c to library & set DEBUG_ENABLE_SEMIHOST in config.
 				i--;
 				if (i<0) {
 					i=1;
 					cumdown=s;
 					s=0;
-					
+					TMR1_IRQHandler();
 					Init_Timer1();
-
-          
 				}
 			}
 		}
